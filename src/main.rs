@@ -6,6 +6,13 @@
         |_|                     
 */
 
+/*TODO
+create function to compress (files and directories)
+create fnuction to decompress
+add progress bar (indicatif(?))
+
+*/
+
 use clap::{Parser, Subcommand};
 use std::fs::File;
 use std::io::{self, BufReader, BufWriter, Read, Write};
