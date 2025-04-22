@@ -1,2 +1,2 @@
-# squeeze
-A CLI file compressor made with rust
+# squeEZe
+A quick, efficient, EZ CLI file compressor made with rust
