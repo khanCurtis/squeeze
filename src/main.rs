@@ -1,3 +1,11 @@
+/* LOGO IDEA
+                    ___ ____    
+  ___ __ _ _  _ ___| __|_  /___ 
+ (_-</ _` | || / -_) _| / // -_)
+ /__/\__, |\_,_\___|___/___\___|
+        |_|                     
+*/
+
 use clap::{Parser, Subcommand};
 use std::fs::File;
 use std::io::{self, BufReader, BufWriter, Read, Write};
