@@ -1,18 +1,3 @@
-/* LOGO IDEA
-                    ___ ____    
-  ___ __ _ _  _ ___| __|_  /___ 
- (_-</ _` | || / -_) _| / // -_)
- /__/\__, |\_,_\___|___/___\___|
-        |_|                     
-*/
-
-/*TODO
-create function to compress (files and directories)
-create fnuction to decompress
-add progress bar (indicatif(?))
-
-*/
-
 use clap::{Parser, Subcommand};
 use std::fs::File;
 use std::io::{self, BufReader, BufWriter, Read, Write};
@@ -38,6 +23,8 @@ enum Commands {
         input: String,
         output: String,
     },
+
+    Explain,
 }
 
 fn compress(input_path: &str, output_path: &str) -> io::Result<()> {
@@ -58,6 +45,13 @@ fn compress(input_path: &str, output_path: &str) -> io::Result<()> {
     }
 
     encoder.finish()?;
+    println!(r#"
+                    ___ ____    
+  ___ __ _ _  _ ___| __|_  /___ 
+ (_-</ _` | || / -_) _| / // -_)
+ /__/\__, |\_,_\___|___/___\___|
+        |_|File Successfully Compressed
+    "#);
     Ok(())
 }
 
@@ -77,7 +71,49 @@ fn decompress(input_path: &str, output_path: &str) -> io::Result<()> {
     }
 
     writer.flush()?;
+    println!(r#"
+                    ___ ____    
+  ___ __ _ _  _ ___| __|_  /___ 
+ (_-</ _` | || / -_) _| / // -_)
+ /__/\__, |\_,_\___|___/___\___|
+        |_|File Successfully Decompressed
+    "#);
     Ok(())
+}
+
+fn explain() { // the r## allows string literals
+    println!(r#"
+                    ___ ____    
+  ___ __ _ _  _ ___| __|_  /___ 
+ (_-</ _` | || / -_) _| / // -_)
+ /__/\__, |\_,_\___|___/___\___|
+        |_|    File Compression
+
+----------------------------------
+
+HOW IT WORKS:
+
+1. Compression:
+   $ squeEZe compress input.txt output.gz
+   • Reads 'input.txt'
+   • Compresses it using Gzip algorithm
+   • Writes to 'output.gz'
+
+2. Decompression:
+   $ squeEZe decompress input.gz output.txt
+   • Reads 'input.gz'
+   • Decompresses the Gzip data
+   • Writes to 'output.txt'
+
+TECHNICAL DETAILS:
+• Uses flate2 crate for Gzip compression
+• Implements buffered I/O (8KB chunks)
+• Handles errors gracefully
+
+TRY IT:
+1. Compress: cargo run -- compress sample.txt compressed.gz
+2. Decompress: cargo run -- decompress compressed.gz result.txt
+    "#) 
 }
 
 fn main() -> io::Result<()> {
@@ -85,5 +121,9 @@ fn main() -> io::Result<()> {
     match args.command {
         Commands::Compress { input, output } => compress(&input, &output),
         Commands::Decompress { input, output } => decompress(&input, &output),
+        Commands::Explain => {
+            explain();
+            Ok(())
+        }
     }
 }
