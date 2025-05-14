@@ -37,14 +37,45 @@ enum Commands {
     },
 }
 
-fn compress() {
+fn compress(input_path: &str, output_path: &str) -> io::Result<()> {
+    let input = File::open(input_path)?;
+    let reader = BufReader::new(input);
+    let output = File::create(output_path)?;
+    let writer = BufWriter::new(output);
+    let mut encoder = GzEncoder::new(writer, Compression::default());
+    let mut buffer = [0u8; 1024];
 
+    for byte in reader.bytes() {
+        let byte = byte?;
+        encoder.write_all(&[byte])?;
+    }
+
+    encoder.finish()?;
+    Ok(())
 }
 
 fn decompress() {
+    let input = File::open(input_path)?;
+    let output = File::create(output_path)?;
+    let mut writer = BufWriter::new(output);
+    let mut decoder = GzDecoder::new(input);
+    let mut buffer = [0u8; 1024];
 
+    while let Ok(count) = decoder.read(&mut buffer) {
+        if count == 0 {
+            break;
+        }
+        writer.write_all(&buffer[..count])?;
+    }
+
+    writer.flush()?;
+    Ok(())
 }
 
-fn main() {
-    println!("Hello, world!");
+fn main() -> io::Result<()> {
+    let args = Cli::parse();
+    match args.command {
+        Commands::Compress { input, output } => compress(&input, &output),
+        Commands::Decompress { input, output } => decompress(&input, &output),
+    }
 }
