@@ -105,12 +105,12 @@ HOW IT WORKS:
    • Decompresses the Gzip data
    • Writes to 'output.txt'
 
-TECHNICAL DETAILS:
+DETAILS:
 • Uses flate2 crate for Gzip compression
 • Implements buffered I/O (8KB chunks)
 • Handles errors gracefully
 
-TRY IT:
+USAGE:
 1. Compress: cargo run -- compress sample.txt compressed.gz
 2. Decompress: cargo run -- decompress compressed.gz result.txt
     "#) 
