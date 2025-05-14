@@ -16,6 +16,9 @@ add progress bar (indicatif(?))
 use clap::{Parser, Subcommand};
 use std::fs::File;
 use std::io::{self, BufReader, BufWriter, Read, Write};
+use flate2::Compression;
+use flate2::read::GzDecoder;
+use flate2::write::GzEncoder;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -26,12 +29,12 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    compress {
+    Compress {
         input: String,
         output: String,
     },
 
-    decompress {
+    Decompress {
         input: String,
         output: String,
     },
@@ -45,23 +48,28 @@ fn compress(input_path: &str, output_path: &str) -> io::Result<()> {
     let mut encoder = GzEncoder::new(writer, Compression::default());
     let mut buffer = [0u8; 1024];
 
-    for byte in reader.bytes() {
-        let byte = byte?;
-        encoder.write_all(&[byte])?;
+    let mut reader = reader;
+    loop {
+        let count = reader.read(&mut buffer)?;
+        if count == 0 {
+            break;
+        }
+        encoder.write_all(&buffer[..count])?;
     }
 
     encoder.finish()?;
     Ok(())
 }
 
-fn decompress() {
+fn decompress(input_path: &str, output_path: &str) -> io::Result<()> {
     let input = File::open(input_path)?;
     let output = File::create(output_path)?;
     let mut writer = BufWriter::new(output);
     let mut decoder = GzDecoder::new(input);
     let mut buffer = [0u8; 1024];
 
-    while let Ok(count) = decoder.read(&mut buffer) {
+    loop {
+        let count = decoder.read(&mut buffer)?;
         if count == 0 {
             break;
         }
